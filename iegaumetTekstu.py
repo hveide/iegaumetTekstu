@@ -26,7 +26,7 @@ def macities(teksts):
             rindkopas.pop(i)
         i += 1
     fragments = []
-    rindkopuIzvele = input("Izvēlaties rindkopas, kuras vēlaties mācīties, piemēram, 1, 1-3, vai p priekš pilna teksta: ")
+    rindkopuIzvele = input("Izvēlaties rindkopas, kuras vēlaties mācīties, piemēram, 1, 1-3, vai P priekš pilna teksta: ").upper()
     if rindkopuIzvele.isdigit():
         rindkopuIzvele = int(rindkopuIzvele) - 1
         try:
@@ -43,13 +43,32 @@ def macities(teksts):
             print("Nepareiza rindkopu izvēle")
             macities(teksts)
         try:
-            rindkopas[rindkopa1] # Kļuda ja ievada a-b, tad 1
+            rindkopas[rindkopa1] # Kļuda ja ievada a-b, tad 1 (recursion)
             rindkopas[rindkopa2]
-            fragments = rindkopas[rindkopa1:rindkopa2]
+            fragments = rindkopas[rindkopa1:rindkopa2+1]
         except IndexError:
             print("Rindkopu izvēle pāriet rindkopu skaitu")
             macities(teksts)
-    print(fragments)
+    elif rindkopuIzvele == "P":
+        fragments = rindkopas
+    else:
+        print("Nepareiza rindkopu izvēle.")
+        macities(teksts)
+    fragments = "\n".join(fragments)
+    varduIzvele = input("V priekš pilniem vārdiem, B priekš katra vārda pirmajiem burtiem: ").upper()
+    if varduIzvele == "B":
+        fragments = pirmieBurti(fragments)
+    print("\n" + fragments + "\n")
+    macitiesIzvele = input("Vai vēlaties mainīt teksta fragmentu? J/N: ").upper()
+    if macitiesIzvele == "J":
+        macities(teksts)
+    else:
+        parbaudit(fragments)
+def pirmieBurti(fragments):
+    pass
+
+def parbaudit(fragments):
+    pass
 
 if __name__ == "__main__":
     ievade()
