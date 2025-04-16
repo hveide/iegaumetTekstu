@@ -17,7 +17,9 @@ def ievade():
         teksts = ievadeTeksts + "\n" + teksts
     if teksts[-1] == "\n":
         teksts = teksts[:-1]
-    macities(teksts)
+    turpinat = True
+    while turpinat:
+        turpinat = macities(teksts)
 def macities(teksts):
     rindkopas = teksts.split('\n')
     i = 0
@@ -33,7 +35,7 @@ def macities(teksts):
             fragments.append(rindkopas[rindkopuIzvele])
         except IndexError:
             print("Nepareizi ievadīts rindkopas numurs")
-            macities(teksts)
+            return True
     elif "-" in rindkopuIzvele:
         rindkopa1, rindkopa2 = rindkopuIzvele.split('-')
         try:
@@ -41,19 +43,19 @@ def macities(teksts):
             rindkopa2 = int(rindkopa2) - 1
         except ValueError:
             print("Nepareiza rindkopu izvēle")
-            macities(teksts)
+            return True
         try:
-            rindkopas[rindkopa1] # Kļuda ja ievada a-b, tad 1 (recursion)
+            rindkopas[rindkopa1]
             rindkopas[rindkopa2]
             fragments = rindkopas[rindkopa1:rindkopa2+1]
         except IndexError:
             print("Rindkopu izvēle pāriet rindkopu skaitu")
-            macities(teksts)
+            return True
     elif rindkopuIzvele == "P":
         fragments = rindkopas
     else:
         print("Nepareiza rindkopu izvēle.")
-        macities(teksts)
+        return True
     fragments = "\n".join(fragments)
     varduIzvele = input("V priekš pilniem vārdiem, B priekš katra vārda pirmajiem burtiem: ").upper()
     if varduIzvele == "B":
@@ -61,11 +63,25 @@ def macities(teksts):
     print("\n" + fragments + "\n")
     macitiesIzvele = input("Vai vēlaties mainīt teksta fragmentu? J/N: ").upper()
     if macitiesIzvele == "J":
-        macities(teksts)
+        return True
     else:
         parbaudit(fragments)
 def pirmieBurti(fragments):
-    pass
+    burti = []
+    for rinda in fragments.split('\n'):
+        rinda = rinda.strip()
+        for vards in rinda.split(' '):
+            burti.append(vards[0])
+            if not vards.isalpha():
+                burti.append(vards[-1])
+        burti.append('\n')
+    i = 0
+    for burts in burti:
+        if not burts.isalpha() and not burts.isdigit():
+            burti[i-1] += burti.pop(i)
+        i += 1
+    parstradats = ' ' + ' '.join(burti)
+    return parstradats
 
 def parbaudit(fragments):
     pass
