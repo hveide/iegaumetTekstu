@@ -59,8 +59,10 @@ def macities(teksts):
     fragments = "\n".join(fragments)
     varduIzvele = input("V priekš pilniem vārdiem, B priekš katra vārda pirmajiem burtiem: ").upper()
     if varduIzvele == "B":
-        fragments = pirmieBurti(fragments)
-    print("\n" + fragments + "\n")
+        radit = pirmieBurti(fragments)
+    elif varduIzvele == "V":
+        radit = fragments
+    print("\n" + radit + "\n")
     macitiesIzvele = input("Vai vēlaties mainīt teksta fragmentu? J/N: ").upper()
     if macitiesIzvele == "J":
         return True
@@ -91,7 +93,6 @@ def parbaudit(fragments):
     lines = sys.stdin.readlines()
     iegaumets = "".join(lines)
 
-    # Remove trailing newline often added by Ctrl+Z/D
     if iegaumets.endswith('\n'):
         iegaumets = iegaumets[:-1]
 
@@ -115,9 +116,6 @@ def parbaudit(fragments):
         if tag == 'equal':
             continue
         irKludas = True
-        if labojums:
-            labojums.append("---")
-
         if tag == 'replace':
             if i1+1 == i2:
                 labojums.append(f"Kļūda {i2}. rindā:")
@@ -152,11 +150,9 @@ def parbaudit(fragments):
         print("Teksts iegaumēts bez kļūdām")
     else:
         print("\n".join(labojums).strip())
-    atkartot = input("Vai vēlaties vēlreiz mācīties? (J/N): ").upper()
+    atkartot = input("Vai vēlaties turpināt mācīties? (J/N): ").upper()
     if atkartot == "J":
-        turpinat = True
-        while turpinat:
-            turpinat = macities(teksts)
+        ievade()
     else:
         exit()
 
