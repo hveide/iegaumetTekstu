@@ -1,6 +1,5 @@
 import os, sys, difflib
 def ievade():
-    global teksts
     ievadeTeksts = input("Iekopējiet savu tekstu (Teksta beigās ievadiet Ctrl+Z + Enter) vai norādiet teksta faila nosaukumu (.txt): ")
     if ".txt" in ievadeTeksts: # Programma atver teksta failu
         if os.path.exists(ievadeTeksts):
@@ -17,7 +16,7 @@ def ievade():
         teksts = ''.join(rindas)
         teksts = ievadeTeksts + "\n" + teksts # Pievieno pirmo ievadīto rindu
     if teksts.endswith("\n"):
-        teksts = teksts[:-1] # Ja beidza ar tukšu rindu, to nodzēš
+        teksts = teksts[:-1] # Ja beidzas ar tukšu rindu, to nodzēš
     turpinat = True
     while turpinat: # Nodrošina programmas ciklu, kuru beidz, ja macities() atgriež False
         turpinat = macities(teksts)
@@ -32,6 +31,9 @@ def macities(teksts):
     fragments = []
     rindkopuIzvele = input("Izvēlaties rindkopas, kuras vēlaties mācīties, piemēram, 1, 1-3, vai P priekš pilna teksta: ").upper()
     if rindkopuIzvele.isdigit():
+        if int(rindkopuIzvele) == 0:
+            print("Nepareizi ievadīts rindkopas numurs")
+            return True
         # Ja ievadīts skaitlis, izvēlas atbilstošo rindkopu, pārbaudot vai tā eksistē
         rindkopuIzvele = int(rindkopuIzvele) - 1
         try:
@@ -44,6 +46,9 @@ def macities(teksts):
         rindkopa1, rindkopa2 = rindkopuIzvele.split('-')
         try:
             # Pārveido par atbilsotsiem indeksiem, pārbaudot, ka ievadīti skaitļi
+            if int(rindkopa1) <= 0 or int(rindkopa2) <= 0:
+                print("Nepareiza rindkopu izvēle")
+                return True
             rindkopa1 = int(rindkopa1) - 1
             rindkopa2 = int(rindkopa2) - 1
         except ValueError:
@@ -93,6 +98,7 @@ def pirmieBurti(fragments):
 
 
 def parbaudit(fragments):
+    fragments = fragments.strip()
     for _ in range(20):
         print("\n") # Paslēpj parādīto teksta fragmentu
     print("Ievadiet iegaumēto tekstu (Beigās Ctrl+Z + Enter): ")
