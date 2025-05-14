@@ -1,25 +1,31 @@
 import os, sys, difflib
 def ievade():
-    ievadeTeksts = input("Iekopējiet savu tekstu (Teksta beigās ievadiet Ctrl+Z + Enter) vai norādiet teksta faila nosaukumu (.txt): ")
-    if ".txt" in ievadeTeksts: # Programma atver teksta failu
-        if os.path.exists(ievadeTeksts):
-            with open(ievadeTeksts, "r") as f:
-                teksts = f.read()
+    while True:
+        try:
+            ievadeTeksts = input("Iekopējiet savu tekstu (Teksta beigās ievadiet Ctrl+Z + Enter) vai norādiet teksta faila nosaukumu (.txt): ")
+        except EOFError:
+            exit()
+        if ".txt" in ievadeTeksts: # Programma atver teksta failu
+            if os.path.exists(ievadeTeksts):
+                with open(ievadeTeksts, "r") as f:
+                    teksts = f.read()
+            else:
+                print(f"Šāds fails neeksistē dotajā mapē. ({os.getcwd()})")
+                continue
+        elif ievadeTeksts == "":
+            exit()
         else:
-            print("Šāds fails neeksistē dotajā mapē.")
-            return
-    elif ievadeTeksts == "":
-        exit()
-    else:
-        # Programma lasa lietotāja ievadi, atļaujot ievadē vairakas rindas
-        rindas = sys.stdin.readlines()
-        teksts = ''.join(rindas)
-        teksts = ievadeTeksts + "\n" + teksts # Pievieno pirmo ievadīto rindu
-    if teksts.endswith("\n"):
-        teksts = teksts[:-1] # Ja beidzas ar tukšu rindu, to nodzēš
-    turpinat = True
-    while turpinat: # Nodrošina programmas ciklu, kuru beidz, ja macities() atgriež False
-        turpinat = macities(teksts)
+            # Programma lasa lietotāja ievadi, atļaujot ievadē vairakas rindas
+            rindas = sys.stdin.readlines()
+            teksts = ''.join(rindas)
+            teksts = ievadeTeksts + "\n" + teksts # Pievieno pirmo ievadīto rindu
+            teksts = teksts.replace(chr(26), '') # Noņem ctrl+z simbolu, ja to nepareizi ievadīja
+        if teksts.endswith("\n"):
+            teksts = teksts[:-1] # Ja beidzas ar tukšu rindu, to nodzēš
+        turpinat = True
+        while turpinat: # Nodrošina programmas ciklu, kuru beidz, ja macities() atgriež False
+            turpinat = macities(teksts)
+        break
 def macities(teksts):
     # Sadala ievadīto tekstu pa rindkopām, izdzēšot tukšās rindas
     rindkopas = teksts.split('\n')
@@ -43,8 +49,8 @@ def macities(teksts):
             return True # Atgriežas cikla sākumā
     elif "-" in rindkopuIzvele:
         # Izvēleta rindkopu grupa
-        rindkopa1, rindkopa2 = rindkopuIzvele.split('-')
         try:
+            rindkopa1, rindkopa2 = rindkopuIzvele.split('-')
             # Pārveido par atbilsotsiem indeksiem, pārbaudot, ka ievadīti skaitļi
             if int(rindkopa1) <= 0 or int(rindkopa2) <= 0:
                 print("Nepareiza rindkopu izvēle")
@@ -71,14 +77,20 @@ def macities(teksts):
     varduIzvele = input("V priekš pilniem vārdiem, B priekš katra vārda pirmajiem burtiem: ").upper()
     if varduIzvele == "B":
         radit = pirmieBurti(fragments) # Izveido atbilstošo tekstu, ko rādīt lietotājam
-    else:
+    elif varduIzvele == "V":
         radit = fragments
+    else:
+        print("Nepareiza izvēle")
+        return True
     print("\n" + radit + "\n")
     macitiesIzvele = input("Vai vēlaties mainīt teksta fragmentu? J/N: ").upper()
     if macitiesIzvele == "J":
         return True # Atkārto ciklu
-    else:
+    elif macitiesIzvele == "N":
         parbaudit(fragments) # Programma turpinās uz lietotāja pārbaudi
+    else:
+        print("Nepareiza izvēle")
+        return True
 def pirmieBurti(fragments):
     burti = []
     for rinda in fragments.split('\n'): # Sadala fragmentu pa rindam
@@ -104,6 +116,7 @@ def parbaudit(fragments):
     print("Ievadiet iegaumēto tekstu (Beigās Ctrl+Z + Enter): ")
     rindas = sys.stdin.readlines() # Iegūst lietotāja ievadi, nodrošinot iespēju ievadīt rindās
     iegaumets = "".join(rindas)
+    iegaumets = iegaumets.replace(chr(26), '') # Noņem ctrl+z simbolu, ja to nepareizi ievadīja
 
     if iegaumets.endswith('\n'):
         iegaumets = iegaumets[:-1] # Ja beidzas ar tukšu rindu, to nodzēš
@@ -117,11 +130,11 @@ def parbaudit(fragments):
     for tag, i1, i2, j1, j2 in diffPrecizitate.get_opcodes(): 
         if tag != 'equal':
             kludas += max(i2 - i1, j2 - j1)
-    print(f"Aptuvenais kļūdu skaits: {kludas}")
+    print(f"Rakstzīmju kļūdu skaits: {kludas}")
 
-    # Sadala teksta mainīgos pa rindām
-    fragmentsRindas = fragments.splitlines() 
-    iegaumetsRindas = iegaumets.splitlines()
+    # Sadala teksta mainīgos pa rindām, attīra liekās atstarpes
+    fragmentsRindas = [fragmentsRinda.strip() for fragmentsRinda in fragments.splitlines()]
+    iegaumetsRindas = [iegaumetsRinda.strip() for iegaumetsRinda in iegaumets.splitlines()]
     diffRindas = difflib.SequenceMatcher(None, fragmentsRindas, iegaumetsRindas) # Izveido SequenceMatcher objektu pēc rindām
     irKludas = False
     labojums = []
