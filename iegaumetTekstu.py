@@ -2,7 +2,7 @@ import os, sys, difflib
 def ievade():
     while True:
         try:
-            ievadeTeksts = input("Iekopējiet savu tekstu (Teksta beigās ievadiet Ctrl+Z + Enter) vai norādiet teksta faila nosaukumu (.txt): ")
+            ievadeTeksts = input("Iekopējiet savu tekstu (Teksta beigās ievadiet Ctrl+Z + Enter) vai norādiet teksta faila nosaukumu (.txt):\n")
         except EOFError:
             exit()
         if ".txt" in ievadeTeksts: # Programma atver teksta failu
@@ -52,7 +52,7 @@ def macities(teksts):
         try:
             rindkopa1, rindkopa2 = rindkopuIzvele.split('-')
             # Pārveido par atbilsotsiem indeksiem, pārbaudot, ka ievadīti skaitļi
-            if int(rindkopa1) <= 0 or int(rindkopa2) <= 0:
+            if int(rindkopa1) <= 0 or int(rindkopa2) <= 0 or int(rindkopa2) < int(rindkopa1):
                 print("Nepareiza rindkopu izvēle")
                 return True
             rindkopa1 = int(rindkopa1) - 1
