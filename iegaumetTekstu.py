@@ -7,7 +7,7 @@ def ievade():
             exit()
         if ".txt" in ievadeTeksts: # Programma atver teksta failu
             if os.path.exists(ievadeTeksts):
-                with open(ievadeTeksts, "r") as f:
+                with open(ievadeTeksts, "r", encoding="UTF-8") as f:
                     teksts = f.read()
             else:
                 print(f"Šāds fails neeksistē dotajā mapē. ({os.getcwd()})")
